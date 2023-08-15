@@ -1,0 +1,106 @@
+﻿@using GmfApi.Models.Entities;
+@using GmfView.Service;
+
+@inject IFuncionarioService funcionarioService
+
+
+<EditForm Model="@FuncionarioObra" OnValidSubmit="@OnValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group row">
+            <div class="form-group row">
+                <label form="obra">Obra: </label>
+                <div class="col-sm-4">
+                        <InputSelect @bind-Value="FuncionarioObra.ObraId" class="form-control">
+                            @if (DropDownListaObra != null){
+                                @foreach (Obra o in DropDownListaObra)
+                                {
+                                        <option  value="@o.Id" selected="@(o.Id == FuncionarioObra.ObraId ? true : false)">
+                                        @o.Nome
+                                        </option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+            </div>
+            
+            <div class="form-group row">
+                <label form="funcionario">Funcionario: </label>
+                <div class="col-sm-4">
+                        <InputSelect @bind-Value="FuncionarioObra.FuncionarioId" class="form-control">
+                            @if (Funcionarios != null){
+                                @foreach (Funcionario f in Funcionarios)
+                                {
+                                        <option  value="@f.Id" selected="@(f.Id == FuncionarioObra.FuncionarioId ? true : false)">
+                                        @f.Nome
+                                        </option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+            </div>
+            
+            <label form="inicio">Data de início </label>
+            <div class="col-sm-4">
+                <InputDate @bind-Value="FuncionarioObra.DtInicio" class="form-control" />
+                <ValidationMessage For="@(()=> FuncionarioObra.DtInicio)" />
+            </div>
+            <label form="fim">Data do fim </label>
+            <div class="col-sm-4">
+                <InputDate @bind-Value="FuncionarioObra.DtFim" class="form-control" />
+                <ValidationMessage For="@(()=> FuncionarioObra.DtFim)" />
+            </div>
+            
+        </div>
+
+        <br />
+
+        <button type="submit" class="btn btn-success">
+            @ButtonTextSubmit
+        </button>
+
+
+
+</EditForm>
+
+@code {
+    List<Obra> DropDownListaObra;
+    public IEnumerable<Funcionario> Funcionarios { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        DropDownListaObra = new List<Obra>()
+    {
+        new Obra(){ Id = 1, Nome = "Residencial Vale Verde"},
+        new Obra(){ Id = 2, Nome = "Campina Nova"},
+        new Obra(){ Id = 3, Nome = "Plaza Shopping"},
+        new Obra(){ Id = 4, Nome = "Residencial Meridien"},
+        new Obra(){ Id = 5, Nome = "Albuquerque Buildings"},
+        new Obra(){ Id = 6, Nome = "Garden Park"}
+    };
+        await GetFuncionarios();
+    }
+
+    protected async Task GetFuncionarios()
+    {
+        Funcionarios = await funcionarioService.GetFuncionarios();
+    }
+
+    [Inject]
+    private NavigationManager navigation { get; set; }
+
+    [Parameter]
+    public FuncionarioObra FuncionarioObra { get; set; }
+
+    [Parameter]
+    public string ButtonTextSubmit { get; set; } = "Salvar";
+
+    [Parameter]
+    public string ButtonTextCancelar { get; set; } = "Cancelar";
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+
+}

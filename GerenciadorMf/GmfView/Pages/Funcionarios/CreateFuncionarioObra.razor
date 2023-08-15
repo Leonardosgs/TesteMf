@@ -1,0 +1,23 @@
+﻿@page "/Funcionarios/createFuncionarioObra"
+@using GmfApi.Models.Entities;
+@using GmfView.Service;
+@using GmfView.Pages.Funcionarios
+@inject IFuncionarioObraService funcionarioObraService
+@inject NavigationManager navigation
+
+<h1>Alocar Funcionário em uma Obra</h1>
+
+<FuncionarioObraForm FuncionarioObra="@funcionarioObra" OnValidSubmit="CriarFuncionarioObra"
+    ButtonTextCancelar="Cancelar"
+    ButtonTextSubmit="Salvar">
+</FuncionarioObraForm>
+
+@code {
+    private FuncionarioObra funcionarioObra = new FuncionarioObra();
+
+    async Task CriarFuncionarioObra()
+    {
+        await funcionarioObraService.AddFuncionarioObra(funcionarioObra);
+        navigation.NavigateTo("funcionarios");
+    }
+}

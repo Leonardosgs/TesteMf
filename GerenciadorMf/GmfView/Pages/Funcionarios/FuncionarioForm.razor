@@ -1,0 +1,116 @@
+﻿@using GmfApi.Models.Entities;
+@using GmfView.Service;
+@using System.ComponentModel;
+@using GmfApi.Model.Data.Validator;
+
+
+@inject IFuncionarioService funcionarioService
+
+<EditForm Model="@Funcionario" OnValidSubmit="@OnValidSubmit">
+        <FluentValidator validator = "FuncionarioObraValidator" />
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group row">
+            
+            <div class="form-group row">
+                <label form="cargo">Cargo: </label>
+                    <div class="col-sm-4">
+                        <InputSelect @bind-Value="Funcionario.CargoId" class="form-control">
+                            @if (Lista != null){
+                                @foreach (Cargo c in Lista)
+                                {
+                                        <option  value="@c.Id" selected="@(c.Id == Funcionario.CargoId ? true : false)">
+                                        @c.Nome
+                                        </option>
+                                }
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => Funcionario.Cargo)"/>
+                    </div>
+            </div>
+            <label for="nome">Nome </label>
+            <div class="col-sm-4">
+                <InputText @bind-Value="Funcionario.Nome" class="form-control" />
+                <ValidationMessage For="@(()=> Funcionario.Nome)" />
+            </div>
+            <label for="nascimento">Nascimento </label>
+            <div class="col-sm-4">
+                <InputDate @bind-Value="Funcionario.DataNascimento" class="form-control" />
+                <ValidationMessage For="@(()=> Funcionario.DataNascimento)" />
+            </div>
+            <label for="rg">RG </label>
+            <div class="col-sm-4">
+                <InputText @bind-Value="Funcionario.Rg" class="form-control"  />
+                <ValidationMessage For="@(()=> Funcionario.Rg)" />
+            </div>
+            <label for="salario">Salario </label>
+            <div class="col-sm-4">
+                <InputNumber @bind-Value="Funcionario.Salario" class="form-control"  />
+                <ValidationMessage For="@(()=> Funcionario.Salario)" />
+            </div>
+            
+        </div>
+
+        <br />
+
+        <button type="submit" class="btn btn-success" >
+            @ButtonTextSubmit
+        </button>
+
+
+
+</EditForm>
+
+
+@code {
+
+    Cargo[] Lista;
+    Cargo ca;
+
+    [Inject]
+    private NavigationManager navigation { get; set; }
+
+    [Parameter]
+    public Funcionario Funcionario { get; set; }
+
+    [Parameter]
+    public Cargo Cargo{ get; set; }
+
+    [Parameter]
+    public string ButtonTextSubmit { get; set; } = "Salvar";
+
+    [Parameter]
+    public string ButtonTextCancelar { get; set; } = "Cancelar";
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        ca = new Cargo();
+        Lista = new Cargo[5]
+    {
+        new Cargo(){ Id = 1, Nome = "Engenheiro"},
+        new Cargo(){ Id = 2, Nome = "Pedreiro"},
+        new Cargo(){ Id = 3, Nome = "Servente"},
+        new Cargo(){ Id = 4, Nome = "Encarregado de Obra"},
+        new Cargo(){ Id = 5, Nome = "Eletricista"}
+    };
+    }
+
+
+    void CargoSelect(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int id))
+        {
+            Cargo.Id = id;
+        }
+    }
+
+    
+
+    
+
+}
